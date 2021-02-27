@@ -1,7 +1,7 @@
-(ns coordinates
-  (:require [axial :as axial]
+(ns hex.coordinates
+  (:require [hex.axial :as axial]
             [clojure.spec.alpha :as s]
-            [cube :as cube]))
+            [hex.cube :as cube]))
 
 (defmacro defcoord
   [k ks bad-ks]

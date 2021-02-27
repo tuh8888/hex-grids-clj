@@ -1,7 +1,7 @@
-(ns core
-  (:require [axial :as axial]
-            [coordinates :as c]
-            [cube :as cube]))
+(ns hex.core
+  (:require [hex.axial :as axial]
+            [hex.coordinates :as c]
+            [hex.cube :as cube]))
 
 (defn hex-reduce
   [f & hexes]
