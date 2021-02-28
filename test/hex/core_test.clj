@@ -64,3 +64,16 @@
           c/->axial
           c/->vectors
           set))))
+
+(deftest distance-test
+  (is (= 4
+        (sut/distance #:hex.cube{:x 0 :y 0 :z 0}
+          #:hex.cube{:x -2 :y -2 :z 4})))
+
+  (is (= 4
+        (sut/distance #:hex.cube{:x 1 :y -1 :z 0}
+          #:hex.cube{:x -2 :y -2 :z 4})))
+
+  (is (= 5
+        (sut/distance #:hex.cube{:x 2 :y -1 :z -1}
+          #:hex.cube{:x -2 :y -2 :z 4}))))

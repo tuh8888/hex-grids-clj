@@ -78,3 +78,12 @@
           r (disj #{-1 0 1} q)])
     (map c/->axial)
     (map (partial hex-reduce + hex))))
+
+(defn distance
+  [start end]
+  (let [locs (c/->cube [start end])]
+    (->> cube/coords
+      (map #(map % locs))
+      (map (partial reduce -))
+      (map #(Math/abs %))
+      (apply max))))
