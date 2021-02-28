@@ -87,5 +87,7 @@
     (is (= [[0 0 0]]
           (c/->vectors [(sut/round #:hex.cube{:x 0.2 :y -0.3 :z 0.4})]))))
   (testing "Off center"
-    (is (= [[1 0 1]]
-          (c/->vectors [(sut/round #:hex.cube{:x 0.8 :y -0.3 :z 0.4})])))))
+    (is (= [[1 0 -1]]
+          (c/->vectors [(sut/round #:hex.cube{:x 0.8 :y -0.3 :z 0.4})])))
+    (is (= #:hex.cube{:x -1 :y 1 :z 0}
+          (sut/round #:hex.cube{:x -1.0, :y 1.0, :z 0.0})))))

@@ -104,4 +104,4 @@
                          (disj (set (keys diff-hex)))
                          (select-keys round-hex)
                          vals
-                         (apply -)))))
+                         (apply - 0)))))
