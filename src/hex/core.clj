@@ -43,7 +43,6 @@
      (nth n-thirds-radians)
      (->> (hex-reduce + center)))))
 
-
 (defmethod rotate ::c/axial
   [hex & params]
   (-> hex

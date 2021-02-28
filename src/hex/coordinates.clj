@@ -25,9 +25,11 @@
 (def coordinate-systems (atom [::axial ::cube ::grid]))
 
 (defn coordinate-system [hex]
-  (->> @coordinate-systems
-    (filter #(s/valid? % hex))
-    first))
+  (or (->> @coordinate-systems
+        (filter #(s/valid? % hex))
+        first)
+    (and (every? (complement coll?) hex)
+      (count hex))))
 
 (defmulti ->cube coordinate-system)
 
@@ -43,6 +45,15 @@
 
 (defmethod ->cube ::grid [hexes] (map ->cube hexes))
 
+(defmethod ->cube :default [vecs]
+  (mapv ->cube vecs))
+
+(defmethod ->cube 2 [v]
+  (->cube (zipmap axial/coords v)))
+
+(defmethod ->cube 3 [v]
+  (zipmap cube/coords v))
+
 (defmethod ->axial ::axial [hex] hex)
 
 (defmethod ->axial ::cube
@@ -50,3 +61,28 @@
   (-> hex
     (dissoc ::cube/x ::cube/y ::cube/z)
     (assoc ::axial/q x ::axial/r z)))
+
+(defmethod ->axial :default [vecs]
+  (mapv ->axial vecs))
+
+(defmethod ->axial 3 [v]
+  (->axial (zipmap cube/coords v)))
+
+(defmethod ->axial 2 [v]
+  (zipmap axial/coords v))
+
+(defn ->vectors
+  [hexes]
+  (->> hexes
+    (map sort)
+    (mapv (partial mapv second))))
+
+
+(->> [#:hex.cube{:x 1 :y 0 :z -1}
+      #:hex.cube{:x 0 :y 1 :z -1}
+      #:hex.cube{:x -1 :y 1 :z 0}
+      #:hex.cube{:x -1 :y 0 :z 1}
+      #:hex.cube{:x 0 :y -1 :z 1}
+      #:hex.cube{:x 1 :y -1 :z 0}]
+  (map sort)
+  (mapv (partial mapv second)))
