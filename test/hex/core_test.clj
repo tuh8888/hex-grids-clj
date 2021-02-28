@@ -49,37 +49,43 @@
 (deftest translate-test)
 
 (deftest neighbors-test
-  (is (= #{[-1 1] [-1 0] [0  1]
-           [1 0] [1 -1] [0 -1]}
-        (->>  #:hex.axial{:q 0 :r 0}
-          sut/neighbors
-          c/->axial
-          c/->vectors
-          set)))
+  (testing "Center"
+    (is (= #{[-1 1] [-1 0] [0  1]
+             [1 0] [1 -1] [0 -1]}
+          (->>  #:hex.axial{:q 0 :r 0}
+            sut/neighbors
+            c/->axial
+            c/->vectors
+            set))))
 
-  (is (= #{[0 1] [0 0] [1  1]
-           [2 0] [2 -1] [1 -1]}
-        (->>  #:hex.axial{:q 1 :r 0}
-          sut/neighbors
-          c/->axial
-          c/->vectors
-          set))))
+  (testing "Off center"
+    (is (= #{[0 1] [0 0] [1  1]
+             [2 0] [2 -1] [1 -1]}
+          (->>  #:hex.axial{:q 1 :r 0}
+            sut/neighbors
+            c/->axial
+            c/->vectors
+            set)))))
 
 (deftest distance-test
-  (is (= 4
-        (sut/distance #:hex.cube{:x 0 :y 0 :z 0}
-          #:hex.cube{:x -2 :y -2 :z 4})))
+  (testing "No change"
+    (is (= 4
+          (sut/distance #:hex.cube{:x 0 :y 0 :z 0}
+            #:hex.cube{:x -2 :y -2 :z 4})))
 
-  (is (= 4
-        (sut/distance #:hex.cube{:x 1 :y -1 :z 0}
-          #:hex.cube{:x -2 :y -2 :z 4})))
+    (is (= 4
+          (sut/distance #:hex.cube{:x 1 :y -1 :z 0}
+            #:hex.cube{:x -2 :y -2 :z 4}))))
 
-  (is (= 5
-        (sut/distance #:hex.cube{:x 2 :y -1 :z -1}
-          #:hex.cube{:x -2 :y -2 :z 4}))))
+  (testing "Difference"
+    (is (= 5
+          (sut/distance #:hex.cube{:x 2 :y -1 :z -1}
+            #:hex.cube{:x -2 :y -2 :z 4})))))
 
 (deftest round-test
-  (is (= [[0 0 0]]
-        (c/->vectors [(sut/round #:hex.cube{:x 0.2 :y -0.3 :z 0.4})])))
-  (is (= [[1 0 1]]
-        (c/->vectors [(sut/round #:hex.cube{:x 0.8 :y -0.3 :z 0.4})]))))
+  (testing "Center"
+    (is (= [[0 0 0]]
+          (c/->vectors [(sut/round #:hex.cube{:x 0.2 :y -0.3 :z 0.4})]))))
+  (testing "Off center"
+    (is (= [[1 0 1]]
+          (c/->vectors [(sut/round #:hex.cube{:x 0.8 :y -0.3 :z 0.4})])))))
