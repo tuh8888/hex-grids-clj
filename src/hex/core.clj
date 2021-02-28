@@ -70,3 +70,11 @@
 
 (defmethod translate ::c/grid [board & params]
   (map #(apply translate % params) board))
+
+(defn neighbors
+  [hex]
+  (->> [q r]
+    (for [q [-1 0 1]
+          r (disj #{-1 0 1} q)])
+    (map c/->axial)
+    (map (partial hex-reduce + hex))))

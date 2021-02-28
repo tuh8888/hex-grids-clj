@@ -47,3 +47,20 @@
               1 #:hex.cube{:x -1 :y 1 :z 0})))))
 
 (deftest translate-test)
+
+(deftest neighbors-test
+  (is (= #{[-1 1] [-1 0] [0  1]
+           [1 0] [1 -1] [0 -1]}
+        (->>  #:hex.axial{:q 0 :r 0}
+          sut/neighbors
+          c/->axial
+          c/->vectors
+          set)))
+
+  (is (= #{[0 1] [0 0] [1  1]
+           [2 0] [2 -1] [1 -1]}
+        (->>  #:hex.axial{:q 1 :r 0}
+          sut/neighbors
+          c/->axial
+          c/->vectors
+          set))))
