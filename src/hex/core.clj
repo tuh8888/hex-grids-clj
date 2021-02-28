@@ -71,13 +71,16 @@
 (defmethod translate ::c/grid [board & params]
   (map #(apply translate % params) board))
 
+(def directions [:left :down-left :down :up :right :up-right])
+
 (defn neighbors
   [hex]
   (->> [q r]
     (for [q [-1 0 1]
           r (disj #{-1 0 1} q)])
     (map c/->axial)
-    (map (partial hex-reduce + hex))))
+    (map (partial hex-reduce + hex))
+    (zipmap directions)))
 
 (defn distance
   [start end]
@@ -129,3 +132,31 @@
                (->> locs
                  (apply lerp t)
                  round)))))))
+
+(defn reachable-hexes
+  [start movement reachable?]
+  (let [vf             [#{start} [[start]]]
+        movement-range (range 1 (inc movement))]
+    (->> movement-range
+      (reduce
+        (fn [[visited fringes] k]
+          (let [fringes (conj fringes [])
+                vf      [visited fringes]
+                hexes   (get fringes (dec k))]
+            (->> hexes
+              (reduce
+                (fn [vf hex]
+                  (->> hex
+                    neighbors
+                    vals
+                    (reduce
+                      (fn [[visited fringes] neighbor]
+                        (if (and (not (visited neighbor))
+                              (reachable? neighbor))
+                          [(conj visited neighbor)
+                           (update fringes k conj neighbor)]
+                          [visited fringes]))
+                      vf)))
+                vf))))
+        vf)
+      first)))
