@@ -100,8 +100,32 @@
                     (merge-with - hex)
                     (map-vals #(Math/abs %)))
         k         (apply max-key diff-hex (keys diff-hex))]
+    k
     (assoc round-hex k (->> k
                          (disj (set (keys diff-hex)))
                          (select-keys round-hex)
                          vals
                          (apply - 0)))))
+
+(defn lerp
+  [t start end]
+  (letfn [(float-lerp [a b]
+            (+ a
+              (* (- b a)
+                t)))]
+    (->> start
+      (map (juxt key (comp (partial apply float-lerp) (juxt val (comp end key)))))
+      (into {}))))
+
+(defn line-to
+  [start end]
+  (let [locs (c/->cube [start end])
+        N    (apply distance locs)]
+    (->> N
+      inc
+      range
+      (map (fn [i]
+             (let [t (* (/ 1.0 N) i)]
+               (->> locs
+                 (apply lerp t)
+                 round)))))))

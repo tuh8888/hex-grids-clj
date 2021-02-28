@@ -91,3 +91,57 @@
           (c/->vectors [(sut/round #:hex.cube{:x 0.8 :y -0.3 :z 0.4})])))
     (is (= #:hex.cube{:x -1 :y 1 :z 0}
           (sut/round #:hex.cube{:x -1.0, :y 1.0, :z 0.0})))))
+
+(deftest line-to-test
+  (testing "Straight line"
+    (testing "From center"
+      (is (= [[0 0] [1 0] [2 0] [3 0] [4 0]]
+            (->> [[0 0] [4 0]]
+              (apply sut/line-to)
+              c/->axial
+              c/->vectors)))
+      (is (= [[0 0] [-1 0] [-2 0] [-3 0] [-4 0]]
+            (->> [[0 0] [-4 0]]
+              (apply sut/line-to)
+              c/->axial
+              c/->vectors)))
+      (is (= [[0 0] [0 1] [0 2] [0 3] [0 4]]
+            (->> [[0 0] [0 4]]
+              (apply sut/line-to)
+              c/->axial
+              c/->vectors))))
+
+    (testing "Non-center"
+      (is (= [ [1 0] [2 0] [3 0] [4 0]]
+            (->> [[1 0] [4 0]]
+              (apply sut/line-to)
+              c/->axial
+              c/->vectors)))
+      (is (= [ [-6 0] [-5 0] [-4 0]]
+            (->> [[-6 0] [-4 0]]
+              (apply sut/line-to)
+              c/->axial
+              c/->vectors)))
+      (is (= [[0 -4] [0 -3] [0 -2] [0 -1] [0 0] [0 1] [0 2] [0 3] [0 4]]
+            (->> [[0 -4] [0 4]]
+              (apply sut/line-to)
+              c/->axial
+              c/->vectors)))))
+
+  (testing "Bent line"
+    (testing "From center"
+      (is (= [[0 0] [1 0] [1 1]]
+            (->> [[0 0] [1 1]]
+              (apply sut/line-to)
+              c/->axial
+              c/->vectors)))
+      (is (= [[0 0] [1 0] [2 0] [2 1] [3 1]]
+            (->> [[0 0] [3 1]]
+              (apply sut/line-to)
+              c/->axial
+              c/->vectors)))
+      (is (= [[0 0] [1 0] [1 1] [2 1] [2 2]]
+            (->> [[0 0] [2 2]]
+              (apply sut/line-to)
+              c/->axial
+              c/->vectors))))))
