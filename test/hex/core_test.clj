@@ -77,3 +77,9 @@
   (is (= 5
         (sut/distance #:hex.cube{:x 2 :y -1 :z -1}
           #:hex.cube{:x -2 :y -2 :z 4}))))
+
+(deftest round-test
+  (is (= [[0 0 0]]
+        (c/->vectors [(sut/round #:hex.cube{:x 0.2 :y -0.3 :z 0.4})])))
+  (is (= [[1 0 1]]
+        (c/->vectors [(sut/round #:hex.cube{:x 0.8 :y -0.3 :z 0.4})]))))

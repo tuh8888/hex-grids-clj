@@ -87,3 +87,21 @@
       (map (partial reduce -))
       (map #(Math/abs %))
       (apply max))))
+
+(defn map-vals [f m]
+  (->> m
+    (map (juxt key (comp f val)))
+    (into {})))
+
+(defn round
+  [hex]
+  (let [round-hex (map-vals #(Math/round %) hex)
+        diff-hex  (->> round-hex
+                    (merge-with - hex)
+                    (map-vals #(Math/abs %)))
+        k         (apply max-key diff-hex (keys diff-hex))]
+    (assoc round-hex k (->> k
+                         (disj (set (keys diff-hex)))
+                         (select-keys round-hex)
+                         vals
+                         (apply -)))))
