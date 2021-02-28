@@ -76,13 +76,3 @@
   (->> hexes
     (map sort)
     (mapv (partial mapv second))))
-
-
-(->> [#:hex.cube{:x 1 :y 0 :z -1}
-      #:hex.cube{:x 0 :y 1 :z -1}
-      #:hex.cube{:x -1 :y 1 :z 0}
-      #:hex.cube{:x -1 :y 0 :z 1}
-      #:hex.cube{:x 0 :y -1 :z 1}
-      #:hex.cube{:x 1 :y -1 :z 0}]
-  (map sort)
-  (mapv (partial mapv second)))
