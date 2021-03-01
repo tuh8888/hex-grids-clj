@@ -65,8 +65,7 @@
 (defmethod translate ::c/cube [hex & params]
   (-> hex
     c/->axial
-    (#(apply translate % params))
-    c/->cube))
+    (#(apply translate % params))))
 
 (defmethod translate ::c/grid [board & params]
   (map #(apply translate % params) board))
