@@ -25,11 +25,11 @@
 (def coordinate-systems (atom [::axial ::cube ::grid]))
 
 (defn coordinate-system [hex]
-  (or (->> @coordinate-systems
-        (filter #(s/valid? % hex))
-        first)
-    (and (every? (complement coll?) hex)
-      (count hex))))
+  (cond (and (map? hex) (every? (partial contains? hex) cube/coords))                   ::cube
+        (and (map? hex) (every? (partial contains? hex) axial/coords))                  ::axial
+        (and (every? (complement coll?) hex) (count hex))                         (count hex)
+        (and (map? (first hex))
+          (some (partial every? (partial contains? (first hex))) [cube/coords axial/coords])) ::grid))
 
 (defmulti ->cube coordinate-system)
 
