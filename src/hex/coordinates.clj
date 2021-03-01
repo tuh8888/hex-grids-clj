@@ -39,9 +39,9 @@
 
 (defmethod ->cube ::axial
   [{q ::axial/q r ::axial/r :as hex}]
-  (-> hex
-    (dissoc ::axial/q ::axial/r)
-    (assoc ::cube/x q ::cube/y (- 0 q r) ::cube/z r)))
+  (->> hex
+    (#(apply dissoc % axial/coords))
+    (merge (zipmap cube/coords [q (- 0 q r) r]))))
 
 (defmethod ->cube ::grid [hexes] (map ->cube hexes))
 
@@ -58,9 +58,9 @@
 
 (defmethod ->axial ::cube
   [{x ::cube/x z ::cube/z :as hex}]
-  (-> hex
-    (dissoc ::cube/x ::cube/y ::cube/z)
-    (assoc ::axial/q x ::axial/r z)))
+  (->> hex
+    (#(apply dissoc % cube/coords))
+    (merge (zipmap axial/coords [x z]))))
 
 (defmethod ->axial :default [vecs]
   (mapv ->axial vecs))
