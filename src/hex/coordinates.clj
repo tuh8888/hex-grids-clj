@@ -1,6 +1,6 @@
 (ns hex.coordinates
-  (:require [hex.axial :as axial]
-            [clojure.spec.alpha :as s]
+  (:require [clojure.spec.alpha :as s]
+            [hex.axial :as axial]
             [hex.cube :as cube]))
 
 (defmacro defcoord
