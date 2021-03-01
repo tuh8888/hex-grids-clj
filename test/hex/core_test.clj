@@ -170,7 +170,10 @@
 
       (is (= #{[0 0] [0 -1] [0 1] [1 0] [-1 0]}
             (-> #:hex.axial{:q 0 :r 0}
-              (sut/reachable-hexes 1 (fn [hex] (not (get-in grid-map [hex :blocked?]))))
+              (sut/reachable-hexes 1 (comp not
+                                       (partial get-in grid-map)
+                                       reverse
+                                       (partial vector :blocked?)))
               c/->axial
               c/->vectors
               set))))))
