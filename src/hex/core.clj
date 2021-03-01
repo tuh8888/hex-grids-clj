@@ -57,10 +57,10 @@
   (fn [hex & _]
     (c/coordinate-system hex)))
 
-(defmethod translate ::c/axial [hex q-diff r-diff]
-  (-> hex
-    (update :q + q-diff)
-    (update :r + r-diff)))
+(defmethod translate ::c/axial [hex diff-hex]
+  (->> hex
+    (hex-reduce + diff-hex)
+    c/->axial))
 
 (defmethod translate ::c/cube [hex & params]
   (-> hex
