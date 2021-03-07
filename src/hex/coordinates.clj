@@ -1,7 +1,8 @@
 (ns hex.coordinates
   (:require [clojure.spec.alpha :as s]
             [hex.axial :as axial]
-            [hex.cube :as cube]))
+            [hex.cube :as cube]
+            [quil.core :as q]))
 
 (defmacro defcoord
   [k ks bad-ks]
@@ -76,3 +77,12 @@
   (->> hexes
     (map sort)
     (mapv (partial mapv second))))
+
+(defn apothem [radius]
+  (* radius (q/cos (/ q/PI 6))))
+
+(defn ->cartesian
+  [radius hex]
+  (let [{r ::axial/r q ::axial/q} hex]
+    [(* (+ (* q 2) r) (apothem radius))
+     (* r (+ radius (/ radius 2)))]))
