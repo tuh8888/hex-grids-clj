@@ -16,13 +16,17 @@
     hex-type
     (map (partial map (partial * radius)))))
 
-(defn hexagon [point {:keys [hex-fn] :as state}]
+(defn hexagon [point {:keys [pre-hex-fn
+                             post-hex-fn]
+                      :as   state}]
+  (when pre-hex-fn
+    (pre-hex-fn point state))
   (q/begin-shape)
-  (when hex-fn
-    (hex-fn point state))
   (doseq [p (vertices state)]
     (apply q/vertex p))
-  (q/end-shape :close))
+  (q/end-shape :close)
+  (when post-hex-fn
+    (post-hex-fn point state)))
 
 (defn apothem [radius]
   (* radius (q/cos (/ q/PI 6))))
