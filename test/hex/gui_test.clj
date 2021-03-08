@@ -14,6 +14,8 @@
             :setup (fn []
                      (q/background 200)
                      {:radius   30
+                      :hex-fn   (fn [_]
+                                  (q/stroke 255 0 0))
                       :hex-type ::sut/pointy
                       :points   (for [q (range 0 4)
                                       r (range 0 4)]

@@ -1,6 +1,5 @@
 (ns hex.gui
   (:require [hex.coordinates :as c]
-            [hex.core :as hex]
             [quil.core :as q]))
 
 (def base-vertices
@@ -17,12 +16,13 @@
     hex-type
     (map (partial map (partial * radius)))))
 
-(defn hexagon [state]
-  (doseq [[p1 p2] (->> state
-                    vertices
-                    ((juxt identity (comp rest cycle)))
-                    (apply map vector))]
-    (q/line p1 p2)))
+(defn hexagon [{:keys [hex-fn] :as state}]
+  (q/begin-shape)
+  (when hex-fn
+    (hex-fn state))
+  (doseq [p (vertices state)]
+    (apply q/vertex p))
+  (q/end-shape :close))
 
 (defn honeycomb [{:keys [radius points] :as state}]
   (doseq [point points]
