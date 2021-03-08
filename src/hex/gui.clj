@@ -16,10 +16,10 @@
     hex-type
     (map (partial map (partial * radius)))))
 
-(defn hexagon [{:keys [hex-fn] :as state}]
+(defn hexagon [point {:keys [hex-fn] :as state}]
   (q/begin-shape)
   (when hex-fn
-    (hex-fn state))
+    (hex-fn point state))
   (doseq [p (vertices state)]
     (apply q/vertex p))
   (q/end-shape :close))
@@ -27,4 +27,4 @@
 (defn honeycomb [{:keys [radius points] :as state}]
   (doseq [point points]
     (q/with-translation (c/->cartesian radius point)
-      (hexagon state))))
+      (hexagon point state))))
