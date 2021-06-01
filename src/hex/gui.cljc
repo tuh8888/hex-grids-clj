@@ -6,8 +6,8 @@
   {::pointy (->> 6
                  range
                  (map #(->> %
-                            (* q/THIRD-PI)
-                            ((juxt q/sin q/cos)))))
+                            (* (/ Math/PI 3))
+                            ((juxt Math/sin Math/cos)))))
    ;; TODO implement flat vertices
    ::flat   nil})
 
@@ -26,7 +26,7 @@
   (q/end-shape :close)
   (when post-hex-fn (post-hex-fn point state)))
 
-(defn apothem [radius] (* radius (q/cos (/ q/PI 6))))
+(defn apothem [radius] (* radius (Math/cos (/ Math/PI 6))))
 
 (defn ->cartesian
   [hex {:keys [radius hex-border-width]
@@ -39,7 +39,7 @@
      (* r
         #?(:clj 3/2
            :cljs 1.5)
-        (+ radius (/ w (q/sin q/THIRD-PI))))]))
+        (+ radius (/ w (Math/sin (/ Math/PI 3)))))]))
 
 (defn honeycomb
   [{:keys [points]
