@@ -30,6 +30,8 @@
   [hex]
   (cond (and (map? hex) (every? (partial contains? hex) cube/coords)) ::cube
         (and (map? hex) (every? (partial contains? hex) axial/coords)) ::axial
+        (and (map? hex) (every? (partial contains? hex) cartesian/coords))
+        ::cartesian
         (and (every? (complement coll?) hex) (count hex)) (count hex)
         (and (map? (first hex))
              (some (partial every? (partial contains? (first hex)))
@@ -39,6 +41,7 @@
 (defmulti ->cube coordinate-system)
 
 (defmulti ->axial coordinate-system)
+(defmulti ->cartesian (fn [hex & _] (coordinate-system hex)))
 
 (defmethod ->cube ::cube [hex] hex)
 
@@ -82,16 +85,21 @@
 
 (defn apothem [radius] (* radius (Math/cos (/ Math/PI 6))))
 
-(defn ->cartesian
-  ([hex radius border-width]
-   (let [{r ::axial/r
-          q ::axial/q}
-         hex
-         w (/ border-width 2)]
-     (assoc hex
-            ::cartesian/x (* (+ (* q 2) r) (+ w (apothem radius)))
-            ::cartesian/y (* r
-                             #?(:clj 3/2
-                                :cljs 1.5)
-                             (+ radius (/ w (Math/sin (/ Math/PI 3))))))))
+(defmethod ->cartesian ::axial
+  ([{r   ::axial/r
+     q   ::axial/q
+     :as hex} radius border-width]
+   (let [w (/ border-width 2)
+         x (* (+ (* q 2) r) (+ w (apothem radius)))
+         y (* r
+              #?(:clj 3/2
+                 :cljs 1.5)
+              (+ radius (/ w (Math/sin (/ Math/PI 3)))))]
+     (->> hex
+          (#(apply dissoc % axial/coords))
+          (merge (zipmap cartesian/coords [x y])))))
   ([hex radius] (->cartesian hex radius 0)))
+
+(defmethod ->cartesian ::cube
+  [hex & params]
+  (apply ->cartesian (->axial hex) params))

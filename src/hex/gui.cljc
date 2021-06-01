@@ -1,34 +1,36 @@
 (ns hex.gui
   (:require [hex.cartesian :as cartesian]
-            [hex.coordinates :as c]))
+            [hex.coordinates :as c]
+            [hex.core :refer [translate]]))
 
 (def base-vertices
   {::pointy (->> 6
                  range
-                 (mapv #(->> %
-                             (* (/ Math/PI 3))
-                             ((juxt Math/sin Math/cos)))))
+                 (map (fn [i]
+                        (let [c (* (/ Math/PI 3) i)]
+                          {::cartesian/x (Math/sin c)
+                           ::cartesian/y (Math/cos c)}))))
    ;; TODO implement flat vertices
    ::flat   nil})
+
+(defn map-vals
+  [f m]
+  (->> m
+       (map (juxt key (comp f val)))
+       (into {})))
 
 (defn vertices
   [radius orientation]
   (->> base-vertices
        orientation
-       (map (partial map (partial * radius)))))
+       (map (partial map-vals (partial * radius)))))
 
 (defn hexagon
   [hex radius border-width orientation]
-  (assoc hex
-         :points
-         (let [hex (c/->cartesian hex radius border-width)
-               cx  (::cartesian/x hex)
-               cy  (::cartesian/y hex)]
-           (->> orientation
-                (vertices radius)
-                (map (fn [[x y]] [(+ x cx) (+ y cy)]))))))
-
-
-(defn honeycomb
-  [radius border-width orientation hexes]
-  (map #(hexagon % radius border-width orientation) hexes))
+  (let [hex (c/->cartesian hex radius border-width)]
+    (->> orientation
+         (vertices radius)
+         (map (partial translate hex))
+         (map #(select-keys % cartesian/coords))
+         (map vals)
+         (map vec))))
