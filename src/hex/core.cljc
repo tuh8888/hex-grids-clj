@@ -1,8 +1,7 @@
 (ns hex.core
   (:require [hex.axial :as axial]
             [hex.coordinates :as c]
-            [hex.cube :as cube]
-            [hex.cartesian :as cartesian]))
+            [hex.cube :as cube]))
 
 (defn hex-reduce
   [f & hexes]
@@ -66,14 +65,6 @@
   [board & params]
   (map #(apply translate % params) board))
 
-
-(defmethod translate ::c/cartesian
-  [hex diff-hex]
-  (zipmap cartesian/coords
-          (map #(->> [hex diff-hex]
-                     (map %)
-                     (apply +))
-               cartesian/coords)))
 
 (def directions [:left :down-left :down :up :right :up-right])
 
