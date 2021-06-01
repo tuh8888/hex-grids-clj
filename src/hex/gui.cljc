@@ -1,12 +1,13 @@
 (ns hex.gui
-  (:require [hex.axial :as axial]))
+  (:require [hex.cartesian :as cartesian]
+            [hex.coordinates :as c]))
 
 (def base-vertices
   {::pointy (->> 6
                  range
-                 (map #(->> %
-                            (* (/ Math/PI 3))
-                            ((juxt Math/sin Math/cos)))))
+                 (mapv #(->> %
+                             (* (/ Math/PI 3))
+                             ((juxt Math/sin Math/cos)))))
    ;; TODO implement flat vertices
    ::flat   nil})
 
@@ -16,17 +17,18 @@
        orientation
        (map (partial map (partial * radius)))))
 
-(defn apothem [radius] (* radius (Math/cos (/ Math/PI 6))))
+(defn hexagon
+  [hex radius border-width orientation]
+  (assoc hex
+         :points
+         (let [hex (c/->cartesian hex radius border-width)
+               cx  (::cartesian/x hex)
+               cy  (::cartesian/y hex)]
+           (->> orientation
+                (vertices radius)
+                (map (fn [[x y]] [(+ x cx) (+ y cy)]))))))
 
-(defn ->cartesian
-  ([hex radius border-width]
-   (let [{r ::axial/r
-          q ::axial/q}
-         hex
-         w (/ border-width 2)]
-     [(* (+ (* q 2) r) (+ w (apothem radius)))
-      (* r
-         #?(:clj 3/2
-            :cljs 1.5)
-         (+ radius (/ w (Math/sin (/ Math/PI 3)))))]))
-  ([hex radius] (->cartesian hex radius 0)))
+
+(defn honeycomb
+  [radius border-width orientation hexes]
+  (map #(hexagon % radius border-width orientation) hexes))

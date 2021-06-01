@@ -2,7 +2,8 @@
   #?(:cljs (:require-macros [hex.coordinates :refer [defcoord]]))
   (:require [clojure.spec.alpha :as s]
             [hex.axial :as axial]
-            [hex.cube :as cube]))
+            [hex.cube :as cube]
+            [hex.cartesian :as cartesian]))
 
 (defmacro defcoord
   [k ks bad-ks]
@@ -78,3 +79,19 @@
   (->> hexes
        (map sort)
        (mapv (partial mapv second))))
+
+(defn apothem [radius] (* radius (Math/cos (/ Math/PI 6))))
+
+(defn ->cartesian
+  ([hex radius border-width]
+   (let [{r ::axial/r
+          q ::axial/q}
+         hex
+         w (/ border-width 2)]
+     (assoc hex
+            ::cartesian/x (* (+ (* q 2) r) (+ w (apothem radius)))
+            ::cartesian/y (* r
+                             #?(:clj 3/2
+                                :cljs 1.5)
+                             (+ radius (/ w (Math/sin (/ Math/PI 3))))))))
+  ([hex radius] (->cartesian hex radius 0)))
